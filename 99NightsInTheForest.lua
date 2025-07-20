@@ -10,34 +10,35 @@ gui.Parent = plr:WaitForChild("PlayerGui")
 gui.ResetOnSpawn = false
 gui.IgnoreGuiInset = true
 
--- Responsive main frame
 local main = Instance.new("Frame")
 main.Size = UDim2.new(0, 300, 0, 455)
-main.Position = UDim2.new(0, 80, 0, 80)
 main.BackgroundColor3 = Color3.fromRGB(34, 37, 44)
 main.BorderSizePixel = 0
 main.AnchorPoint = Vector2.new(0,0)
 main.Parent = gui
 
--- Responsive sizing function
+-- Center on first show, allow drag after
+local wasDragged = false
+
+local function getCenterPosition(w, h)
+    local vp = workspace.CurrentCamera and workspace.CurrentCamera.ViewportSize or Vector2.new(800,600)
+    return UDim2.new(0, math.max(12, math.floor((vp.X-w)/2)), 0, math.max(12, math.floor((vp.Y-h)/2)))
+end
+
 local function updateMainSize()
+    if wasDragged then return end -- Don't auto-center after drag!
     local vp = workspace.CurrentCamera and workspace.CurrentCamera.ViewportSize or Vector2.new(800,600)
     local minW = 240
     local minH = 300
-    local padW = 24
-    local padH = 24
     local w = math.clamp(math.floor(vp.X * 0.7), minW, 400)
     local h = math.clamp(math.floor(vp.Y * 0.7), minH, 500)
     main.Size = UDim2.new(0, w, 0, h)
-    main.Position = UDim2.new(0, math.max(12, math.floor((vp.X-w)/2)), 0, math.max(12, math.floor((vp.Y-h)/2)))
+    main.Position = getCenterPosition(w, h)
 end
 
 if workspace.CurrentCamera then
     workspace.CurrentCamera:GetPropertyChangedSignal("ViewportSize"):Connect(updateMainSize)
 end
-game:GetService("RunService").RenderStepped:Connect(function()
-    updateMainSize()
-end)
 updateMainSize()
 
 local dbar = Instance.new("TextButton")
@@ -523,7 +524,7 @@ local c1 = Instance.new("UICorner")
 c1.CornerRadius = UDim.new(0,6)
 c1.Parent = btnCamp
 
--- FIX: REFRESH button width increased and font size decreased for no overlap
+-- REFRESH button width increased and font size decreased for no overlap
 local btnRef = Instance.new("TextButton")
 btnRef.Size = UDim2.new(0, 68, 1, 0)
 btnRef.Text = "REFRESH"
@@ -604,6 +605,7 @@ local dragStart, startPos
 
 dbar.MouseButton1Down:Connect(function()
     dragging = true
+    wasDragged = true -- Mark as dragged, stop auto-centering!
     dragStart = UIS:GetMouseLocation()
     startPos = main.Position
 end)
