@@ -8,13 +8,37 @@ local gui = Instance.new("ScreenGui")
 gui.Name = "BringFoliageUI"
 gui.Parent = plr:WaitForChild("PlayerGui")
 gui.ResetOnSpawn = false
+gui.IgnoreGuiInset = true
 
+-- Responsive main frame
 local main = Instance.new("Frame")
 main.Size = UDim2.new(0, 300, 0, 455)
 main.Position = UDim2.new(0, 80, 0, 80)
 main.BackgroundColor3 = Color3.fromRGB(34, 37, 44)
 main.BorderSizePixel = 0
+main.AnchorPoint = Vector2.new(0,0)
 main.Parent = gui
+
+-- Responsive sizing function
+local function updateMainSize()
+    local vp = workspace.CurrentCamera and workspace.CurrentCamera.ViewportSize or Vector2.new(800,600)
+    local minW = 240
+    local minH = 300
+    local padW = 24
+    local padH = 24
+    local w = math.clamp(math.floor(vp.X * 0.7), minW, 400)
+    local h = math.clamp(math.floor(vp.Y * 0.7), minH, 500)
+    main.Size = UDim2.new(0, w, 0, h)
+    main.Position = UDim2.new(0, math.max(12, math.floor((vp.X-w)/2)), 0, math.max(12, math.floor((vp.Y-h)/2)))
+end
+
+if workspace.CurrentCamera then
+    workspace.CurrentCamera:GetPropertyChangedSignal("ViewportSize"):Connect(updateMainSize)
+end
+game:GetService("RunService").RenderStepped:Connect(function()
+    updateMainSize()
+end)
+updateMainSize()
 
 local dbar = Instance.new("TextButton")
 dbar.Size = UDim2.new(1, 0, 0, 36)
@@ -30,7 +54,7 @@ dbar.Parent = main
 local dtitle = Instance.new("TextLabel")
 dtitle.Size = UDim2.new(1, 0, 1, 0)
 dtitle.BackgroundTransparency = 1
-dtitle.Text = "Bring/Teleport/Player"
+dtitle.Text = "CheatXplorer HUB"
 dtitle.TextColor3 = Color3.fromRGB(0,255,127)
 dtitle.Font = Enum.Font.GothamBold
 dtitle.TextSize = 18
@@ -82,13 +106,20 @@ btPlr.BorderSizePixel = 0
 btPlr.AutoButtonColor = false
 btPlr.Parent = tbar
 
+-- Responsive content area
 local tabY = 40 + 32 + 7
-local tabH = 455 - tabY - 52
+local tabH = function()
+    return math.max(main.AbsoluteSize.Y - (tabY + 52), 100)
+end
 local content = Instance.new("Frame")
-content.Size = UDim2.new(1, -16, 0, tabH)
+content.Size = UDim2.new(1, -16, 1, -(tabY + 52 + 8))
 content.Position = UDim2.new(0, 8, 0, tabY)
 content.BackgroundTransparency = 1
 content.Parent = main
+
+main:GetPropertyChangedSignal("AbsoluteSize"):Connect(function()
+    content.Size = UDim2.new(1, -16, 1, -(tabY + 52 + 8))
+end)
 
 local pgBring = Instance.new("Frame")
 pgBring.Size = UDim2.new(1, 0, 1, 0)
@@ -305,6 +336,49 @@ jumpStat.Font = Enum.Font.GothamBold
 jumpStat.TextSize = 12
 jumpStat.Parent = statWrap
 
+-- Custom Info Section (Creator/Game/Discord)
+local infoBox = Instance.new("Frame")
+infoBox.Size = UDim2.new(1, -16, 0, 68)
+infoBox.BackgroundTransparency = 1
+infoBox.Parent = scrPlr
+
+local infoLay = Instance.new("UIListLayout")
+infoLay.SortOrder = Enum.SortOrder.LayoutOrder
+infoLay.Padding = UDim.new(0, 1)
+infoLay.Parent = infoBox
+infoLay.HorizontalAlignment = Enum.HorizontalAlignment.Center
+infoLay.VerticalAlignment = Enum.VerticalAlignment.Center
+
+local lblGame = Instance.new("TextLabel")
+lblGame.Size = UDim2.new(1, 0, 0, 18)
+lblGame.BackgroundTransparency = 1
+lblGame.Text = "Game: 99 Nights in the Forest"
+lblGame.TextColor3 = Color3.fromRGB(170, 220, 255)
+lblGame.Font = Enum.Font.GothamBold
+lblGame.TextSize = 14
+lblGame.TextStrokeTransparency = 0.7
+lblGame.Parent = infoBox
+
+local lblBy = Instance.new("TextLabel")
+lblBy.Size = UDim2.new(1, 0, 0, 18)
+lblBy.BackgroundTransparency = 1
+lblBy.Text = "Creator: CheatXplorer"
+lblBy.TextColor3 = Color3.fromRGB(140, 255, 180)
+lblBy.Font = Enum.Font.GothamBold
+lblBy.TextSize = 14
+lblBy.TextStrokeTransparency = 0.7
+lblBy.Parent = infoBox
+
+local lblDisc = Instance.new("TextLabel")
+lblDisc.Size = UDim2.new(1, 0, 0, 18)
+lblDisc.BackgroundTransparency = 1
+lblDisc.Text = "Discord: discord.gg/qQswtd3YGY"
+lblDisc.TextColor3 = Color3.fromRGB(255, 200, 120)
+lblDisc.Font = Enum.Font.GothamBold
+lblDisc.TextSize = 14
+lblDisc.TextStrokeTransparency = 0.7
+lblDisc.Parent = infoBox
+
 local function ws()
     local char = plr.Character
     local hum = char and char:FindFirstChildOfClass("Humanoid")
@@ -320,9 +394,9 @@ end
 plr:GetPropertyChangedSignal("Character"):Connect(updateStats)
 plr.CharacterAdded:Connect(updateStats)
 
-local function mkBtn(txt, col)
+local function mkBtn(txt, col, width)
     local b = Instance.new("TextButton")
-    b.Size = UDim2.new(0, 120, 0, 22)
+    b.Size = UDim2.new(0, width or 120, 0, 22)
     b.Text = txt
     b.BackgroundColor3 = col
     b.TextColor3 = Color3.new(1,1,1)
@@ -449,13 +523,14 @@ local c1 = Instance.new("UICorner")
 c1.CornerRadius = UDim.new(0,6)
 c1.Parent = btnCamp
 
+-- FIX: REFRESH button width increased and font size decreased for no overlap
 local btnRef = Instance.new("TextButton")
-btnRef.Size = UDim2.new(0, 44, 1, 0)
-btnRef.Text = "REF"
+btnRef.Size = UDim2.new(0, 68, 1, 0)
+btnRef.Text = "REFRESH"
 btnRef.BackgroundColor3 = Color3.fromRGB(34, 195, 102)
 btnRef.TextColor3 = Color3.new(1,1,1)
 btnRef.Font = Enum.Font.GothamBold
-btnRef.TextSize = 12
+btnRef.TextSize = 11
 btnRef.BorderSizePixel = 0
 btnRef.Parent = bottom
 local c2 = Instance.new("UICorner")
