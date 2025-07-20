@@ -1,3 +1,5 @@
+-- CheatXplorer HUB UI, UNHIDE BUTTON top-center, compact width, no text overlap
+
 local plr = game.Players.LocalPlayer
 
 pcall(function()
@@ -11,13 +13,12 @@ gui.ResetOnSpawn = false
 gui.IgnoreGuiInset = true
 
 local main = Instance.new("Frame")
-main.Size = UDim2.new(0, 300, 0, 455)
+main.Size = UDim2.new(0, 240, 0, 420) -- Reduced width & height for compactness
 main.BackgroundColor3 = Color3.fromRGB(34, 37, 44)
 main.BorderSizePixel = 0
 main.AnchorPoint = Vector2.new(0,0)
 main.Parent = gui
 
--- Center on first show, allow drag after
 local wasDragged = false
 
 local function getCenterPosition(w, h)
@@ -26,12 +27,14 @@ local function getCenterPosition(w, h)
 end
 
 local function updateMainSize()
-    if wasDragged then return end -- Don't auto-center after drag!
+    if wasDragged then return end
     local vp = workspace.CurrentCamera and workspace.CurrentCamera.ViewportSize or Vector2.new(800,600)
-    local minW = 240
-    local minH = 300
-    local w = math.clamp(math.floor(vp.X * 0.7), minW, 400)
-    local h = math.clamp(math.floor(vp.Y * 0.7), minH, 500)
+    local minW = 200
+    local minH = 280
+    local maxW = 270
+    local maxH = 430
+    local w = math.clamp(math.floor(vp.X * 0.45), minW, maxW)
+    local h = math.clamp(math.floor(vp.Y * 0.7), minH, maxH)
     main.Size = UDim2.new(0, w, 0, h)
     main.Position = getCenterPosition(w, h)
 end
@@ -58,18 +61,18 @@ dtitle.BackgroundTransparency = 1
 dtitle.Text = "CheatXplorer HUB"
 dtitle.TextColor3 = Color3.fromRGB(0,255,127)
 dtitle.Font = Enum.Font.GothamBold
-dtitle.TextSize = 18
+dtitle.TextSize = 16
 dtitle.Parent = dbar
 
 local tbar = Instance.new("Frame")
-tbar.Size = UDim2.new(1, -24, 0, 32)
-tbar.Position = UDim2.new(0, 12, 0, 40)
+tbar.Size = UDim2.new(1, -18, 0, 28)
+tbar.Position = UDim2.new(0, 9, 0, 40)
 tbar.BackgroundTransparency = 1
 tbar.BorderSizePixel = 0
 tbar.Parent = main
 
-local btnW = 76
-local btnH = 26
+local btnW = 66
+local btnH = 22
 
 local btBring = Instance.new("TextButton")
 btBring.Size = UDim2.new(0, btnW, 0, btnH)
@@ -78,48 +81,44 @@ btBring.Text = "BRING"
 btBring.BackgroundColor3 = Color3.fromRGB(74, 125, 255)
 btBring.TextColor3 = Color3.new(1,1,1)
 btBring.Font = Enum.Font.GothamBold
-btBring.TextSize = 14
+btBring.TextSize = 13
 btBring.BorderSizePixel = 0
 btBring.AutoButtonColor = false
 btBring.Parent = tbar
 
 local btTp = Instance.new("TextButton")
 btTp.Size = UDim2.new(0, btnW, 0, btnH)
-btTp.Position = UDim2.new(0, btnW + 4, 0, 0)
+btTp.Position = UDim2.new(0, btnW + 3, 0, 0)
 btTp.Text = "TELEPORT"
 btTp.BackgroundColor3 = Color3.fromRGB(60, 180, 120)
 btTp.TextColor3 = Color3.new(1,1,1)
 btTp.Font = Enum.Font.GothamBold
-btTp.TextSize = 14
+btTp.TextSize = 13
 btTp.BorderSizePixel = 0
 btTp.AutoButtonColor = false
 btTp.Parent = tbar
 
 local btPlr = Instance.new("TextButton")
 btPlr.Size = UDim2.new(0, btnW, 0, btnH)
-btPlr.Position = UDim2.new(0, (btnW + 4) * 2, 0, 0)
+btPlr.Position = UDim2.new(0, (btnW + 3) * 2, 0, 0)
 btPlr.Text = "PLAYER"
 btPlr.BackgroundColor3 = Color3.fromRGB(140, 90, 250)
 btPlr.TextColor3 = Color3.new(1,1,1)
 btPlr.Font = Enum.Font.GothamBold
-btPlr.TextSize = 14
+btPlr.TextSize = 13
 btPlr.BorderSizePixel = 0
 btPlr.AutoButtonColor = false
 btPlr.Parent = tbar
 
--- Responsive content area
-local tabY = 40 + 32 + 7
-local tabH = function()
-    return math.max(main.AbsoluteSize.Y - (tabY + 52), 100)
-end
+local tabY = 40 + 28 + 6
 local content = Instance.new("Frame")
-content.Size = UDim2.new(1, -16, 1, -(tabY + 52 + 8))
-content.Position = UDim2.new(0, 8, 0, tabY)
+content.Size = UDim2.new(1, -10, 1, -(tabY + 44 + 6))
+content.Position = UDim2.new(0, 5, 0, tabY)
 content.BackgroundTransparency = 1
 content.Parent = main
 
 main:GetPropertyChangedSignal("AbsoluteSize"):Connect(function()
-    content.Size = UDim2.new(1, -16, 1, -(tabY + 52 + 8))
+    content.Size = UDim2.new(1, -10, 1, -(tabY + 44 + 6))
 end)
 
 local pgBring = Instance.new("Frame")
@@ -138,7 +137,7 @@ scrBring.Parent = pgBring
 
 local layBring = Instance.new("UIListLayout")
 layBring.SortOrder = Enum.SortOrder.LayoutOrder
-layBring.Padding = UDim.new(0,4)
+layBring.Padding = UDim.new(0,3)
 layBring.Parent = scrBring
 
 local function safeBtn(btn, cb)
@@ -165,7 +164,7 @@ local function bringModel(n)
     local root = char:FindFirstChild("HumanoidRootPart")
     local items = workspace:FindFirstChild("Items")
     if not (root and items) then return end
-    local pos = root.CFrame * CFrame.new(0, 0, -10)
+    local pos = root.CFrame * CFrame.new(0, 0, -9)
     for _,m in ipairs(items:GetChildren()) do
         if m:IsA("Model") and m.Name == n and m.PrimaryPart then
             m:SetPrimaryPartCFrame(pos)
@@ -188,19 +187,19 @@ local function fillBring()
         if m:IsA("Model") and m.PrimaryPart and not names[m.Name] then
             names[m.Name] = true
             local b = Instance.new("TextButton")
-            b.Size = UDim2.new(1, 0, 0, 32)
+            b.Size = UDim2.new(1, 0, 0, 28)
             b.Text = m.Name
             b.BackgroundColor3 = Color3.fromRGB(102, 153, 255)
             b.TextColor3 = Color3.new(1,1,1)
             b.Font = Enum.Font.GothamBold
-            b.TextSize = 15
+            b.TextSize = 12
             b.BorderSizePixel = 0
             b.AutoButtonColor = true
             b.Parent = scrBring
             b.ClipsDescendants = true
             b.TextWrapped = true
             local c = Instance.new("UICorner")
-            c.CornerRadius = UDim.new(0, 7)
+            c.CornerRadius = UDim.new(0, 6)
             c.Parent = b
             local s = Instance.new("UIStroke")
             s.Color = Color3.fromRGB(55,55,90)
@@ -209,8 +208,7 @@ local function fillBring()
             safeBtn(b, function() bringModel(m.Name) end)
         end
     end
-    task.wait()
-    scrBring.CanvasSize = UDim2.new(0,0,0,layBring.AbsoluteContentSize.Y+4)
+    scrBring.CanvasSize = UDim2.new(0,0,0,layBring.AbsoluteContentSize.Y+3)
 end
 
 local pgTp = Instance.new("Frame")
@@ -229,7 +227,7 @@ scrTp.Parent = pgTp
 
 local layTp = Instance.new("UIListLayout")
 layTp.SortOrder = Enum.SortOrder.LayoutOrder
-layTp.Padding = UDim.new(0,4)
+layTp.Padding = UDim.new(0,3)
 layTp.Parent = scrTp
 
 local function tpModel(n)
@@ -260,19 +258,19 @@ local function fillTp()
         if m:IsA("Model") and m.PrimaryPart and not names[m.Name] then
             names[m.Name] = true
             local b = Instance.new("TextButton")
-            b.Size = UDim2.new(1, 0, 0, 32)
+            b.Size = UDim2.new(1, 0, 0, 28)
             b.Text = m.Name
             b.BackgroundColor3 = Color3.fromRGB(80, 205, 140)
             b.TextColor3 = Color3.new(1,1,1)
             b.Font = Enum.Font.GothamBold
-            b.TextSize = 15
+            b.TextSize = 12
             b.BorderSizePixel = 0
             b.AutoButtonColor = true
             b.Parent = scrTp
             b.ClipsDescendants = true
             b.TextWrapped = true
             local c = Instance.new("UICorner")
-            c.CornerRadius = UDim.new(0, 7)
+            c.CornerRadius = UDim.new(0, 6)
             c.Parent = b
             local s = Instance.new("UIStroke")
             s.Color = Color3.fromRGB(55,90,55)
@@ -281,8 +279,7 @@ local function fillTp()
             safeBtn(b, function() tpModel(m.Name) end)
         end
     end
-    task.wait()
-    scrTp.CanvasSize = UDim2.new(0,0,0,layTp.AbsoluteContentSize.Y+4)
+    scrTp.CanvasSize = UDim2.new(0,0,0,layTp.AbsoluteContentSize.Y+3)
 end
 
 local function refreshList()
@@ -303,80 +300,79 @@ scrPlr.Parent = pgPlr
 
 local layPlr = Instance.new("UIListLayout")
 layPlr.SortOrder = Enum.SortOrder.LayoutOrder
-layPlr.Padding = UDim.new(0, 6)
+layPlr.Padding = UDim.new(0, 4)
 layPlr.Parent = scrPlr
 layPlr.HorizontalAlignment = Enum.HorizontalAlignment.Center
 layPlr.VerticalAlignment = Enum.VerticalAlignment.Top
 
 local statWrap = Instance.new("Frame")
-statWrap.Size = UDim2.new(1, -10, 0, 38)
+statWrap.Size = UDim2.new(1, -6, 0, 32)
 statWrap.BackgroundTransparency = 1
 statWrap.Parent = scrPlr
 
 local statLay = Instance.new("UIListLayout")
 statLay.SortOrder = Enum.SortOrder.LayoutOrder
-statLay.Padding = UDim.new(0, 3)
+statLay.Padding = UDim.new(0, 2)
 statLay.Parent = statWrap
 statLay.HorizontalAlignment = Enum.HorizontalAlignment.Center
 
 local wsStat = Instance.new("TextLabel")
-wsStat.Size = UDim2.new(0, 140, 0, 16)
+wsStat.Size = UDim2.new(0, 110, 0, 13)
 wsStat.BackgroundTransparency = 1
 wsStat.Text = "WalkSpeed: ..."
 wsStat.TextColor3 = Color3.fromRGB(160,220,255)
 wsStat.Font = Enum.Font.GothamBold
-wsStat.TextSize = 12
+wsStat.TextSize = 11
 wsStat.Parent = statWrap
 
 local jumpStat = Instance.new("TextLabel")
-jumpStat.Size = UDim2.new(0, 140, 0, 16)
+jumpStat.Size = UDim2.new(0, 110, 0, 13)
 jumpStat.BackgroundTransparency = 1
 jumpStat.Text = "Unli Jump: ..."
 jumpStat.TextColor3 = Color3.fromRGB(180,120,250)
 jumpStat.Font = Enum.Font.GothamBold
-jumpStat.TextSize = 12
+jumpStat.TextSize = 11
 jumpStat.Parent = statWrap
 
--- Custom Info Section (Creator/Game/Discord)
 local infoBox = Instance.new("Frame")
-infoBox.Size = UDim2.new(1, -16, 0, 68)
+infoBox.Size = UDim2.new(1, -10, 0, 55)
 infoBox.BackgroundTransparency = 1
 infoBox.Parent = scrPlr
 
 local infoLay = Instance.new("UIListLayout")
 infoLay.SortOrder = Enum.SortOrder.LayoutOrder
-infoLay.Padding = UDim.new(0, 1)
+infoLay.Padding = UDim.new(0, 0)
 infoLay.Parent = infoBox
 infoLay.HorizontalAlignment = Enum.HorizontalAlignment.Center
 infoLay.VerticalAlignment = Enum.VerticalAlignment.Center
 
 local lblGame = Instance.new("TextLabel")
-lblGame.Size = UDim2.new(1, 0, 0, 18)
+lblGame.Size = UDim2.new(1, 0, 0, 14)
 lblGame.BackgroundTransparency = 1
 lblGame.Text = "Game: 99 Nights in the Forest"
 lblGame.TextColor3 = Color3.fromRGB(170, 220, 255)
 lblGame.Font = Enum.Font.GothamBold
-lblGame.TextSize = 14
+lblGame.TextSize = 11
 lblGame.TextStrokeTransparency = 0.7
 lblGame.Parent = infoBox
 
 local lblBy = Instance.new("TextLabel")
-lblBy.Size = UDim2.new(1, 0, 0, 18)
+lblBy.Size = UDim2.new(1, 0, 0, 14)
 lblBy.BackgroundTransparency = 1
 lblBy.Text = "Creator: CheatXplorer"
 lblBy.TextColor3 = Color3.fromRGB(140, 255, 180)
 lblBy.Font = Enum.Font.GothamBold
-lblBy.TextSize = 14
+lblBy.TextSize = 11
 lblBy.TextStrokeTransparency = 0.7
 lblBy.Parent = infoBox
 
 local lblDisc = Instance.new("TextLabel")
-lblDisc.Size = UDim2.new(1, 0, 0, 18)
+lblDisc.Size = UDim2.new(1, 0, 0, 14)
 lblDisc.BackgroundTransparency = 1
 lblDisc.Text = "Discord: discord.gg/qQswtd3YGY"
 lblDisc.TextColor3 = Color3.fromRGB(255, 200, 120)
 lblDisc.Font = Enum.Font.GothamBold
-lblDisc.TextSize = 14
+lblDisc.TextSize = 11
 lblDisc.TextStrokeTransparency = 0.7
 lblDisc.Parent = infoBox
 
@@ -397,17 +393,17 @@ plr.CharacterAdded:Connect(updateStats)
 
 local function mkBtn(txt, col, width)
     local b = Instance.new("TextButton")
-    b.Size = UDim2.new(0, width or 120, 0, 22)
+    b.Size = UDim2.new(0, width or 97, 0, 17)
     b.Text = txt
     b.BackgroundColor3 = col
     b.TextColor3 = Color3.new(1,1,1)
     b.Font = Enum.Font.GothamBold
-    b.TextSize = 12
+    b.TextSize = 11
     b.BorderSizePixel = 0
     b.AutoButtonColor = true
     b.TextWrapped = true
     local c = Instance.new("UICorner")
-    c.CornerRadius = UDim.new(0, 6)
+    c.CornerRadius = UDim.new(0, 5)
     c.Parent = b
     local s = Instance.new("UIStroke")
     s.Color = Color3.fromRGB(55,55,90)
@@ -490,84 +486,85 @@ btTp.MouseButton1Click:Connect(function() setTab("TELEPORT") end)
 btPlr.MouseButton1Click:Connect(function() setTab("PLAYER") end)
 
 local bottom = Instance.new("Frame")
-bottom.Size = UDim2.new(1, -12, 0, 40)
-bottom.Position = UDim2.new(0, 6, 1, -46)
+bottom.Size = UDim2.new(1, -8, 0, 35)
+bottom.Position = UDim2.new(0, 4, 1, -39)
 bottom.BackgroundColor3 = Color3.fromRGB(30,30,30)
 bottom.BackgroundTransparency = 0.07
 bottom.Parent = main
 bottom.BorderSizePixel = 0
 
 local pad = Instance.new("UIPadding")
-pad.PaddingLeft = UDim.new(0,6)
-pad.PaddingRight = UDim.new(0,6)
-pad.PaddingTop = UDim.new(0,6)
-pad.PaddingBottom = UDim.new(0,6)
+pad.PaddingLeft = UDim.new(0,4)
+pad.PaddingRight = UDim.new(0,4)
+pad.PaddingTop = UDim.new(0,4)
+pad.PaddingBottom = UDim.new(0,4)
 pad.Parent = bottom
 
 local layBottom = Instance.new("UIListLayout")
 layBottom.FillDirection = Enum.FillDirection.Horizontal
 layBottom.VerticalAlignment = Enum.VerticalAlignment.Center
 layBottom.HorizontalAlignment = Enum.HorizontalAlignment.Center
-layBottom.Padding = UDim.new(0,6)
+layBottom.Padding = UDim.new(0,2)
 layBottom.Parent = bottom
 
 local btnCamp = Instance.new("TextButton")
-btnCamp.Size = UDim2.new(0, 74, 1, 0)
+btnCamp.Size = UDim2.new(0, 50, 1, 0)
 btnCamp.Text = "To Camp"
 btnCamp.BackgroundColor3 = Color3.fromRGB(100, 180, 255)
 btnCamp.TextColor3 = Color3.new(1,1,1)
 btnCamp.Font = Enum.Font.GothamBold
-btnCamp.TextSize = 12
+btnCamp.TextSize = 11
 btnCamp.BorderSizePixel = 0
 btnCamp.Parent = bottom
 local c1 = Instance.new("UICorner")
-c1.CornerRadius = UDim.new(0,6)
+c1.CornerRadius = UDim.new(0,5)
 c1.Parent = btnCamp
 
--- REFRESH button width increased and font size decreased for no overlap
 local btnRef = Instance.new("TextButton")
-btnRef.Size = UDim2.new(0, 68, 1, 0)
+btnRef.Size = UDim2.new(0, 58, 1, 0)
 btnRef.Text = "REFRESH"
 btnRef.BackgroundColor3 = Color3.fromRGB(34, 195, 102)
 btnRef.TextColor3 = Color3.new(1,1,1)
 btnRef.Font = Enum.Font.GothamBold
-btnRef.TextSize = 11
+btnRef.TextSize = 10
 btnRef.BorderSizePixel = 0
 btnRef.Parent = bottom
 local c2 = Instance.new("UICorner")
-c2.CornerRadius = UDim.new(0,6)
+c2.CornerRadius = UDim.new(0,5)
 c2.Parent = btnRef
 
 local btnHide = Instance.new("TextButton")
-btnHide.Size = UDim2.new(0, 44, 1, 0)
+btnHide.Size = UDim2.new(0, 38, 1, 0)
 btnHide.Text = "HIDE"
 btnHide.BackgroundColor3 = Color3.fromRGB(60, 60, 180)
 btnHide.TextColor3 = Color3.new(1,1,1)
 btnHide.Font = Enum.Font.GothamBold
-btnHide.TextSize = 12
+btnHide.TextSize = 10
 btnHide.BorderSizePixel = 0
 btnHide.Parent = bottom
 local c3 = Instance.new("UICorner")
-c3.CornerRadius = UDim.new(0,6)
+c3.CornerRadius = UDim.new(0,5)
 c3.Parent = btnHide
 
 local btnClose = Instance.new("TextButton")
-btnClose.Size = UDim2.new(0, 44, 1, 0)
+btnClose.Size = UDim2.new(0, 38, 1, 0)
 btnClose.Text = "CLOSE"
 btnClose.BackgroundColor3 = Color3.fromRGB(200, 70, 70)
 btnClose.TextColor3 = Color3.new(1,1,1)
 btnClose.Font = Enum.Font.GothamBold
-btnClose.TextSize = 12
+btnClose.TextSize = 10
 btnClose.BorderSizePixel = 0
 btnClose.Parent = bottom
 local c4 = Instance.new("UICorner")
-c4.CornerRadius = UDim.new(0,6)
+c4.CornerRadius = UDim.new(0,5)
 c4.Parent = btnClose
 
+-- UNHIDE BUTTON: top center, no text overlap, compact
 local btnUnhide = Instance.new("TextButton")
-btnUnhide.Size = UDim2.new(0, 90, 0, 30)
-btnUnhide.Position = UDim2.new(0, 6, 0, 6)
-btnUnhide.Text = "UNHIDE GUI"
+btnUnhide.Size = UDim2.new(0, 90, 0, 26)
+btnUnhide.AnchorPoint = Vector2.new(0.5, 0)
+btnUnhide.Position = UDim2.new(0.5, 0, 0, 6)
+btnUnhide.Text = "UNHIDE"
 btnUnhide.BackgroundColor3 = Color3.fromRGB(60, 60, 180)
 btnUnhide.TextColor3 = Color3.new(1,1,1)
 btnUnhide.Font = Enum.Font.GothamBold
@@ -575,7 +572,7 @@ btnUnhide.TextSize = 12
 btnUnhide.Parent = gui
 btnUnhide.Visible = false
 local c5 = Instance.new("UICorner")
-c5.CornerRadius = UDim.new(0,6)
+c5.CornerRadius = UDim.new(0,5)
 c5.Parent = btnUnhide
 
 btnCamp.MouseButton1Click:Connect(function()
@@ -605,7 +602,7 @@ local dragStart, startPos
 
 dbar.MouseButton1Down:Connect(function()
     dragging = true
-    wasDragged = true -- Mark as dragged, stop auto-centering!
+    wasDragged = true
     dragStart = UIS:GetMouseLocation()
     startPos = main.Position
 end)
