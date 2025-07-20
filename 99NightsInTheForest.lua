@@ -412,10 +412,10 @@ local function mkBtn(txt, col, width)
     return b
 end
 
-local wsPlus = mkBtn("+1 Walkspeed", Color3.fromRGB(80, 170, 250))
+local wsPlus = mkBtn("+2 Walkspeed", Color3.fromRGB(80, 170, 250))
 wsPlus.Parent = scrPlr
 
-local wsMinus = mkBtn("-1 Walkspeed", Color3.fromRGB(80, 120, 200))
+local wsMinus = mkBtn("-2 Walkspeed", Color3.fromRGB(80, 120, 200))
 wsMinus.Parent = scrPlr
 
 local jumpOn = mkBtn("Enable Unli Jump", Color3.fromRGB(140, 90, 250))
@@ -427,12 +427,12 @@ jumpOff.Parent = scrPlr
 safeBtn(wsPlus, function()
     local char = plr.Character or plr.CharacterAdded:Wait()
     local hum = char and char:FindFirstChildOfClass("Humanoid")
-    if hum then hum.WalkSpeed = hum.WalkSpeed + 1 updateStats() end
+    if hum then hum.WalkSpeed = hum.WalkSpeed + 2 updateStats() end
 end)
 safeBtn(wsMinus, function()
     local char = plr.Character or plr.CharacterAdded:Wait()
     local hum = char and char:FindFirstChildOfClass("Humanoid")
-    if hum then hum.WalkSpeed = math.max(0, hum.WalkSpeed - 1) updateStats() end
+    if hum then hum.WalkSpeed = math.max(0, hum.WalkSpeed - 2) updateStats() end
 end)
 
 local jumpConn
